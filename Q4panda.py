@@ -15,7 +15,8 @@ print("poids moyen : ", poids_moyen)
 profil_moyen_sport = df.groupby("Sport")[["Age", "Height", "Weight"]].mean()
 print("profil moyen par sport : ", profil_moyen_sport)
 
-
+# la suite ne sert pas au code c'est des test
+#--------------------------------------------------------------
 aero = df[df["Sport"] == "Aeronautics"]
 print(aero)
 #Il n'y a qu'une personne dans Aeronautics donc autant supprimer ce sport
