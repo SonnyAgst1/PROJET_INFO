@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # Charger la base de données
-df = pd.read_csv("athlete_events.csv")
+df = pd.read_csv("donnees_jeux_olympiques/athlete_events.csv")
 
 # Initialiser une liste pour stocker les corrélations par année
 correlations = []
