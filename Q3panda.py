@@ -1,7 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# Charger la base de données
+# Charge la base de données
 df = pd.read_csv("donnees_jeux_olympiques/athlete_events.csv")
 print(df.head())
 
