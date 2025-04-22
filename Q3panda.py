@@ -1,19 +1,16 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+from import_donnee_panda import importdonneepanda
+# Charger la base de données
+df = importdonneepanda("donnees_jeux_olympiques/athlete_events.csv")
 
 # Charge la base de données
-df = pd.read_csv("donnees_jeux_olympiques/athlete_events.csv")
-print(df.head())
+def profil_moyen(df):
 
-age_moyen = df["Age"].mean()
-print("age moyen : " ,age_moyen)
-taille_moyen = df["Height"].mean()
-print("taille moyenne : ", taille_moyen)
-poids_moyen = df["Weight"].mean()
-print("poids moyen : ", poids_moyen)
+    profil_moyen_sport = df.groupby("Sport")[["Age", "Height", "Weight"]].mean()
+    return print("profil moyen par sport : ", profil_moyen_sport)
 
-profil_moyen_sport = df.groupby("Sport")[["Age", "Height", "Weight"]].mean()
-print("profil moyen par sport : ", profil_moyen_sport)
+profil_moyen(df)
 
 # la suite ne sert pas au code c'est des test
 #--------------------------------------------------------------
