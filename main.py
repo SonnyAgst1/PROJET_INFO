@@ -19,6 +19,7 @@ print("nombre de medaille gagné par Michael Phelps : ", nbr_medailles(df_panda,
 from Q2 import sport_medal_correlation
 
 print(sport_medal_correlation(df_panda))
+###
 
 # Question 3 : Quel est le profil type d'un médaillé selon la discipline ?
 
