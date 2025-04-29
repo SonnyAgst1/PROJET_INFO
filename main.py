@@ -13,7 +13,10 @@ df_panda = importdonneepanda("donnees_jeux_olympiques/athlete_events.csv")
 # Question 1 : Déterminer le nombre de médaille gagné par Micheal Phelps
 
 print("nombre de medaille gagné par Michael Phelps : ", nbr_medailles(df_panda, "Michael Fred Phelps, II"))
-
+total_medals = nbr_medailles(df_panda,athlete_name)
+tot=sum(total_medals)
+print("OR :", total_medals[0] , "ARGENT :", total_medals[1], "Bronze :", total_medals[2] )
+print("Nombre de médailles gagnées au total par cet athlète est", tot)
 
 # Question 2 : Quels sont les sports où la taille et le poids influencent le plus les performances ?
 from Q2 import sport_medal_correlation
