@@ -50,6 +50,3 @@ def graphique_medailles_par_type(df, top_n=10):
     plt.legend()
     plt.tight_layout()
     plt.show()
-
-df = pd.read_csv("donnees_jeux_olympiques/athlete_events.csv")
-graphique_medailles_par_type(df)
