@@ -50,3 +50,4 @@ def graphique_medailles_par_type(df, top_n=10):
     plt.legend()
     plt.tight_layout()
     plt.show()
+    return plt

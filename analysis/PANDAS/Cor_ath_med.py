@@ -1,8 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 from import_donnee_panda import importdonneepanda
-# Charger la base de données
-df = importdonneepanda("donnees_jeux_olympiques/athlete_events.csv")
 
 def plot_correlation_athletes_vs_medals(df):
     correlations = []
@@ -44,5 +42,4 @@ def plot_correlation_athletes_vs_medals(df):
     plt.grid(True)
     plt.tight_layout()
     plt.show()
-
-plot_correlation_athletes_vs_medals(df)
+    return plt

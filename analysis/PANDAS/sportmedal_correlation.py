@@ -1,7 +1,6 @@
 import pandas as pd
 from import_donnee_panda import importdonneepanda
 # Charger la base de données
-df_panda = importdonneepanda("donnees_jeux_olympiques/athlete_events.csv")
 
 def sport_medal_correlation(df):
     """

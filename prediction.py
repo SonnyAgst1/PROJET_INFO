@@ -1,31 +1,14 @@
 import pandas as pd
 import numpy as np
-from sklearn.model_selection import train_test_split
+import os
 from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+import joblib
 
-from import_donnee_panda import importdonneepanda
-# Charger la base de données
-df = importdonneepanda("donnees_jeux_olympiques/athlete_events.csv")
-
-def predict_medal_chance(df, age, height, weight, sex, sport, noc):
+def train_and_save_model(df, model_path="modele_medaille.pkl", cols_path="colonnes.pkl"):
     """
-    Prédit la probabilité pour un athlète de remporter une médaille
-    en fonction de ses caractéristiques.
-
-    Paramètres :
-    - df : base de données (DataFrame pandas)
-    - age : âge de l'athlète (int)
-    - height : taille (en cm) (int)
-    - weight : poids (en kg) (int)
-    - sex : "M" ou "F" (str)
-    - sport : sport pratiqué (str)
-    - noc : code pays (ex: "FRA") (str)
-
-    Retourne :
-    - probabilité de médaille (float entre 0 et 1)
+    Entraîne le modèle et sauvegarde le modèle + colonnes encodées.
     """
-
-    # 1. Préparation des données
     df = df.copy()
     df["Medal_binary"] = df["Medal"].notna().astype(int)
     X = df[["Age", "Height", "Weight", "Sex", "Sport", "NOC"]]
@@ -33,17 +16,33 @@ def predict_medal_chance(df, age, height, weight, sex, sport, noc):
 
     X = X.dropna()
     y = y.loc[X.index]
-
     X_encoded = pd.get_dummies(X, columns=["Sex", "Sport", "NOC"])
 
-    # 2. Division train/test
-    X_train, X_test, y_train, y_test = train_test_split(X_encoded, y, test_size=0.3, random_state=42)
-
-    # 3. Entraînement du modèle
     model = LogisticRegression(max_iter=1000)
-    model.fit(X_train, y_train)
+    model.fit(X_encoded, y)
 
-    # 4. Préparation de l'athlète
+    joblib.dump(model, model_path)
+    joblib.dump(X_encoded.columns, cols_path)
+    print("✅ Modèle et colonnes enregistrés.")
+
+
+def predict_medal_chance(df, age, height, weight, sex, sport, noc,
+                         model_path="modele_medaille.pkl", cols_path="colonnes.pkl"):
+    """
+    Prédit la probabilité qu'un athlète remporte une médaille à partir de ses caractéristiques.
+    Charge le modèle entraîné si disponible, sinon l'entraîne et l'enregistre.
+    """
+
+    # Vérifier si le modèle existe déjà
+    if not (os.path.exists(model_path) and os.path.exists(cols_path)):
+        print("⚠️ Modèle non trouvé. Entraînement en cours...")
+        train_and_save_model(df, model_path, cols_path)
+
+    # Charger le modèle et les colonnes
+    model = joblib.load(model_path)
+    colonnes = joblib.load(cols_path)
+
+    # Construire le vecteur de l’athlète
     athlete = {
         "Age": age,
         "Height": height,
@@ -53,17 +52,21 @@ def predict_medal_chance(df, age, height, weight, sex, sport, noc):
         f"NOC_{noc}": 1
     }
 
-    # Initialiser une ligne vide
-    athlete_row = pd.DataFrame(np.zeros((1, X_encoded.shape[1])), columns=X_encoded.columns)
+    # Créer une ligne vide avec les bonnes colonnes
+    athlete_row = pd.DataFrame(np.zeros((1, len(colonnes))), columns=colonnes)
 
-    # Remplir les valeurs connues
+    # Remplir les colonnes connues
     for col in athlete:
         if col in athlete_row.columns:
             athlete_row[col] = athlete[col]
 
-    # 5. Prédiction
-    prob_medal = model.predict_proba(athlete_row)[0][1]
+    # Prédiction
+    prob = model.predict_proba(athlete_row)[0][1]
+    return prob
 
-    return prob_medal
+# Chargement de ta base
+df = pd.read_csv("donnees_jeux_olympiques/athlete_events.csv")
 
-print(predict_medal_chance(df, 25, 195, 95, "M", "Basketball", "USA"))
+# Prédiction directe (le modèle s'entraîne une seule fois puis est réutilisé)
+proba = predict_medal_chance(df, 25, 195, 95, "M", "Basketball", "USA")
+print(f"Probabilité de médaille : {proba:.2%}")
