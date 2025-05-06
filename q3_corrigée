@@ -1,0 +1,30 @@
+df_medaille = df[df["Medal"].notna()]
+
+
+df_medaille = df_medaille.dropna(subset=["Age", "Height", "Weight"])
+
+
+medals_per_athlete_sport = (
+    df_medaille
+    .groupby(["Sport", "ID", "Name", "Sex", "Age", "Height", "Weight"])
+    .size()
+    .reset_index(name="Medal_Count")
+)
+
+top20_by_sport = (
+    medals_per_athlete_sport
+    .sort_values(["Sport", "Medal_Count"], ascending=[True, False])
+    .groupby("Sport")
+    .head(20)
+)
+
+profil_type_top20 = (
+    top20_by_sport
+    .groupby("Sport")[["Age", "Height", "Weight"]]
+    .mean()
+    .round(1)
+)
+
+
+print("Profil type des 20 athlètes les plus médaillés par sport :")
+print(profil_type_top20)
