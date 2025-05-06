@@ -7,26 +7,36 @@ from import_donnee_pur import importdonneespur
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 
-from Nbr_medaille_ath import nbr_medailles
+from Nbr_medaille_athlète import nbr_medailles
+import os
+os.makedirs("resultats", exist_ok=True)
 
 df_panda = importdonneepanda("analysis/donnees_jeux_olympiques/athlete_events.csv")
 df_pur = importdonneespur("analysis/donnees_jeux_olympiques/athlete_events.csv")
 # Question 1 : Déterminer le nombre de médaille gagné par Micheal Phelps
 
-print("Déterminer le nombre de médaille gagné par Micheal Phelps")
-print("nombre de medaille gagné par Michael Phelps : ", nbr_medailles(df_panda,"Michael Fred Phelps, II"))
-medailles = nbr_medailles(df_panda,"Michael Fred Phelps, II")
+athlete = "Michael Fred Phelps, II"
+medailles = nbr_medailles_pur(df_pur, athlete)
+
+# Affichage dans le terminal
+print(f"Nombre de médailles de {athlete} :")
+for type_medaille, nb in medailles.items():
+    print(f"  {type_medaille} : {nb}")
+
+# Écriture dans le rapport
 with open("resultats/rapport.txt", "a", encoding="utf-8") as f:
-    f.write(f"Nombre de médailles de {athlete} :\n")
-    f.write(medailles.to_string())
-    f.write("\n\n")
+    f.write(f"Nombre de médailles de {athlete} (Python pur) :\n")
+    for type_medaille, nb in medailles.items():
+        f.write(f"  {type_medaille} : {nb}\n")
+    f.write("\n")
 
 
 # Question 2 : Quels sont les sports où la taille et le poids influencent le plus les performances ?
 from sportmedal_correlation import sport_medal_correlation
 
-print("Quels sont les sports où la taille et le poids influencent le plus les performances ?",sport_medal_correlation(df_panda))
 correlations = sport_medal_correlation(df_panda)
+print("Quels sont les sports où la taille et le poids influencent le plus les performances ?")
+print(correlations.head(10))
 
 # Ajoute une colonne d'identification de l'analyse
 correlations["Analyse"] = "Corrélation taille/poids vs médailles"
@@ -39,13 +49,14 @@ correlations = correlations[cols]
 correlations.to_csv("resultats/tableaux.csv", mode="a", index=False)
 
 
+
 # Question 3 : Quel est le profil type d'un médaillé selon la discipline ?
 
 from Profil_moyen import profil_moyen
 
 print("Quel est le profil type d'un médaillé selon la discipline ?")
-profil_moyen(df_panda)
 result = profil_moyen(df_panda)
+print(result.head())
 
 # Sauvegarde du résultat
 result.reset_index().assign(Analyse="Profil moyen par sport").to_csv("resultats/tableaux.csv", mode="a", index=False)
@@ -56,11 +67,9 @@ result.reset_index().assign(Analyse="Profil moyen par sport").to_csv("resultats/
 from Cor_ath_med import plot_correlation_athletes_vs_medals
 
 print(" Y a t-il une relation entre la taille d'un pays (nombre d'athlète) et son nombre de médaille ?")
-plot_correlation_athletes_vs_medals(df_panda)
 plt_obj = plot_correlation_athletes_vs_medals(df_panda)
-
-# Enregistrer dans un fichier PNG
 plt_obj.savefig("resultats/correlation_athletes_vs_medailles.png")
+plt_obj.close()
 
 
 # Question 5 : Trouver les bornes inférieur et supérieur du nombre de médaille par nation en 2016
@@ -68,6 +77,16 @@ from borne_inf_sup import analyser_jo_par_annee
 chemin = "donnees_jeux_olympiques/donnees_jeux_olympiques/athlete_events.csv"
 print("Trouver les bornes inférieur et supérieur du nombre de médaille par nation en 2016 :")
 analyser_jo_par_annee( chemin , 2016 )
+annee = 2016
+from io import StringIO
+import sys
+
+buffer = StringIO()
+sys.stdout = buffer
+
+analyser_jo_par_annee(chemin, annee)
+
+sys.stdout = sys.__stdout__
 with open("resultats/rapport.txt", "a", encoding="utf-8") as f:
     f.write(f"Résultats pour les JO de {annee} :\n")
     f.write(buffer.getvalue())
@@ -81,6 +100,7 @@ from sport_dominant_pays import sport_dominant_par_noc
 result = sport_dominant_par_noc(df_panda)  # ou df selon le nom de ta base
 
 # Affichage dans le terminal
+print("Quels sont les pays les plus spécialisés ?")
 print(" 10 pays les plus spécialisés dans un sport (min 10 médailles, min 3 sports) :")
 print(result)
 
@@ -115,7 +135,8 @@ from nbr_med_pays_co_vs_ind import graphique_medailles_par_type
 print("Quel est le nombre de médailles remportées par chaque pays, en distinguant celles gagnées dans des sports collectifs de celles gagnées dans des sports individuels ?")
 graphique_medailles_par_type(df_panda, top_n=10)
 plt_obje = graphique_medailles_par_type(df_panda, top_n=10)
-plt_obje.savefig("resultats/correlation_athletes_vs_medailles.png")
+plt_obje.savefig("resultats/medailles_collectif_vs_individuel.png")
+
 
 
 
@@ -143,7 +164,7 @@ sex = "M"
 sport = "Basketball"
 noc = "USA"
 
-proba = predict_medal_chance(df, age, height, weight, sex, sport, noc)
+proba = predict_medal_chance(df_panda, age, height, weight, sex, sport, noc)
 
 # Affichage à l'écran
 print(f"✅ Probabilité qu’un athlète de {noc} en {sport} remporte une médaille : {proba:.2%}")
