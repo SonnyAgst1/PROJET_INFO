@@ -8,7 +8,11 @@ def analyser_jo_par_annee(fichier_csv, annee):
         reader = csv.DictReader(f)
         for row in reader:
             if row['Year'] and row['Medal']!= 'NA' and int(row['Year']) == annee:
+<<<<<<< HEAD
                 key = (row['Games'], row['Sport'], row['Event'], row['Medal'], row['NOC'])
+=======
+                key = (row['Games'], row['Sport'], row['Event'], row['Medal'], row['Team'])
+>>>>>>> 9fd2327dde178b813b7ceb71fc1a510ba6f9f0af
                 if key not in seen_keys:
                     medal_counts[row['NOC']] += 1
                     seen_keys.add(key)
