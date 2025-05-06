@@ -1,6 +1,5 @@
 df_medals = df[df["Medal"].notna()]
 
-
 host_countries = [
     {"Year": 1896, "City": "Athens", "Host_NOC": "GRE"},
     {"Year": 1900, "City": "Paris", "Host_NOC": "FRA"},
