@@ -3,8 +3,6 @@ from collections import defaultdict
 import matplotlib.pyplot as plt
 from import_donnee_pur import importdonneespur
 
-data = importdonneespur("donnees_jeux_olympiques/athlete_events.csv")
-
 
 #data est une liste de dictionnaire où chaque dictionnaire correspond à une ligne
 #on veut reproduire le graphe de l'évolution de l'age moyen des athlètes mais en python pur
@@ -46,5 +44,4 @@ def agemoyenathlètes(df):
     plt.grid(True)
     plt.tight_layout()
     plt.show()
-
-agemoyenathlètes(data)
+    return plt

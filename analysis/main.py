@@ -89,10 +89,12 @@ plt_obje.savefig("resultats/correlation_athletes_vs_medailles.png")
 
 
 
+
 # Question 9 : Evolution de l'age moyen des athlètes au cours du temps ( graphique )
 
 from agemoyentemps import
 
 print("Comment a évolué l'age moyen des athlètes au cours du temps ? ", agemoyenathlètes(df_pur))
+
 
 # Question 10 :
