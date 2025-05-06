@@ -75,8 +75,19 @@ with open("resultats/rapport.txt", "a", encoding="utf-8") as f:
 
 
 
-# Question 6 :
+# Question 6 : Pour chaque pays, quel est le sport dans lequel il a remporté le plus de médailles, et quelle proportion cela représente par rapport à ses médailles totales ?
 
+from sport_dominant_pays import sport_dominant_par_noc
+result = sport_dominant_par_noc(df_panda)  # ou df selon le nom de ta base
+
+# Affichage dans le terminal
+print(" 10 pays les plus spécialisés dans un sport (min 10 médailles, min 3 sports) :")
+print(result)
+
+with open("resultats/rapport.txt", "a", encoding="utf-8") as f:
+    f.write("Question : Quels sont les 10 pays (NOC) les plus spécialisés dans un sport (≥10 médailles, ≥3 sports) ?\n")
+    f.write(result.to_string(index=False))
+    f.write("\n\n")
 
 
 # Question 7 : Moyenne du nombre de medaille gagné par pays sur toutes les éditions
