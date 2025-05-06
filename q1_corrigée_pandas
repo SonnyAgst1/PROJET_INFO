@@ -1,0 +1,15 @@
+def nbr_medailles(athlete_name):
+    athlete_df = df[(df["Name"] == athlete_name) & (df["Medal"].notna())]
+    medaille_count = athlete_df["Medal"].value_counts()
+    return medaille_count
+
+athlete_name = "Michael Fred Phelps, II"
+total_medals = nbr_medailles(athlete_name)
+
+gold = total_medals.get("Gold", 0)
+silver = total_medals.get("Silver", 0)
+bronze = total_medals.get("Bronze", 0)
+total = gold + silver + bronze
+
+print("OR :", gold, "ARGENT :", silver, "BRONZE :", bronze)
+print("Nombre total de médailles gagnées :", total)
