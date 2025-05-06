@@ -1,3 +1,5 @@
+import csv
+from collections import defaultdict
 def analyser_jo_par_annee(fichier_csv, annee):
     medal_counts = defaultdict(int)
     seen_keys = set()
@@ -5,10 +7,10 @@ def analyser_jo_par_annee(fichier_csv, annee):
     with open(fichier_csv, encoding='utf-8') as f:
         reader = csv.DictReader(f)
         for row in reader:
-            if row['Year'] and row['Medal'] and int(row['Year']) == annee:
-                key = (row['Games'], row['Sport'], row['Event'], row['Medal'], row['Team'])
+            if row['Year'] and row['Medal']!= 'NA' and int(row['Year']) == annee:
+                key = (row['Games'], row['Sport'], row['Event'], row['Medal'], row['NOC'])
                 if key not in seen_keys:
-                    medal_counts[row['Team']] += 1
+                    medal_counts[row['NOC']] += 1
                     seen_keys.add(key)
 
     if not medal_counts:
@@ -32,7 +34,7 @@ def analyser_jo_par_annee(fichier_csv, annee):
         print(f"  {i}. {country} : {count} médailles")
 
 def menu():
-    fichier = "donnees_jeux_olympiques/donnees_jeux_olympiques/athlete_events.csv"
+    fichier = "analysis/donnees_jeux_olympiques/athlete_events.csv"
     print(" Analyse des Jeux Olympiques par année\n")
     while True:
         try:
