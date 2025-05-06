@@ -1,0 +1,51 @@
+import csv
+from collections import defaultdict
+
+# 1. Définir les sports collectifs
+collective_sports = {'Basketball', 'Football', 'Handball', 'Hockey', 'Water Polo',
+                     'Rugby Sevens', 'Baseball', 'Softball', 'Volleyball'}
+
+# 2. Initialiser les structures
+indiv_counts = defaultdict(int)
+coll_seen = set()  # pour éviter les doublons collectifs
+coll_counts = defaultdict(int)
+
+# 3. Lire le fichier CSV
+with open("donnees_jeux_olympiques/donnees_jeux_olympiques/athlete_events.csv", encoding='utf-8') as file:
+    reader = csv.DictReader(file)
+    for row in reader:
+        team = row['Team'].strip().lower()  # Normalisation
+        sport = row['Sport'].strip()
+        medal = row['Medal'].strip().lower()
+        year = int(row['Year'].strip())
+        event = row['Event'].strip()
+
+        if medal not in ['gold', 'silver', 'bronze']:
+            continue  # ignorer les lignes sans médaille
+
+        if sport in collective_sports:
+            key = (team, year, event, medal)
+            if key not in coll_seen:
+                coll_seen.add(key)
+                coll_counts[team] += 1
+        else:
+            indiv_counts[team] += 1
+
+# 4. Calcul des moyennes
+
+# Moyenne uniquement pour les pays ayant des médailles individuelles
+avg_indiv = sum(indiv_counts.values()) / len(indiv_counts) if indiv_counts else 0
+
+# Moyenne uniquement pour les pays ayant des médailles collectives
+avg_coll = sum(coll_counts.values()) / len(coll_counts) if coll_counts else 0
+
+# Fusion des deux pour le total
+all_teams = set(indiv_counts.keys()) | set(coll_counts.keys())
+total_counts = {team: indiv_counts.get(team, 0) + coll_counts.get(team, 0) for team in all_teams}
+avg_total = sum(total_counts.values()) / len(total_counts) if total_counts else 0
+
+# 5. Affichage des résultats
+print("Moyenne de médailles par pays :")
+print(f" - Sports individuels : {avg_indiv:.2f}")
+print(f" - Sports collectifs  : {avg_coll:.2f}")
+print(f" - Total              : {avg_total:.2f}")
