@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import csv
 from collections import defaultdict
 
-def moyenne_medailles_par_pays_par_annee_pur(data):
+def moyenne_medailles_par_pays_par_annee(data):
     """
     Version Python pur.
     Calcule la moyenne de médailles par pays sur l'ensemble des années olympiques.
@@ -37,13 +37,3 @@ def moyenne_medailles_par_pays_par_annee_pur(data):
     moyennes_triees = sorted(moyennes, key=lambda x: x[1], reverse=True)
 
     return moyennes_triees
-
-
-from import_donnee_pur import importdonneespur
-
-data = importdonneespur("analysis/donnees_jeux_olympiques/athlete_events.csv")
-resultats = moyenne_medailles_par_pays_par_annee_pur(data)
-
-# Affichage des 10 premiers pays
-for team, moyenne in resultats[:10]:
-    print(f"{team} : {moyenne:.2f} médailles/an")

@@ -94,20 +94,25 @@ with open("resultats/rapport.txt", "a", encoding="utf-8") as f:
 
 
 
-# Question 6 : Pour chaque pays, quel est le sport dans lequel il a remporté le plus de médailles, et quelle proportion cela représente par rapport à ses médailles totales ?
+# Question 6 : Est ce que les pays hotes performent mieux que les autres ?
 
-from sport_dominant_pays import sport_dominant_par_noc
-result = sport_dominant_par_noc(df_panda)  # ou df selon le nom de ta base
+from host_boost import comparaison_host_vs_nonhost
 
-# Affichage dans le terminal
-print("Quels sont les pays les plus spécialisés ?")
-print(" 10 pays les plus spécialisés dans un sport (min 10 médailles, min 3 sports) :")
+print("Les pays hôtes gagnent-ils plus de médailles lorsqu’ils organisent les JO ?")
+result = comparaison_host_vs_nonhost(df_panda)
 print(result)
 
+# Sauvegarde dans rapport.txt
 with open("resultats/rapport.txt", "a", encoding="utf-8") as f:
-    f.write("Question : Quels sont les 10 pays (NOC) les plus spécialisés dans un sport (≥10 médailles, ≥3 sports) ?\n")
+    f.write("Question : Les pays organisateurs gagnent-ils plus de médailles chez eux ?\n")
     f.write(result.to_string(index=False))
     f.write("\n\n")
+
+# Sauvegarde dans tableaux.csv
+result["Analyse"] = "Médailles pays hôte vs non-hôte"
+result.to_csv("resultats/tableaux.csv", mode="a", index=False)
+
+
 
 
 # Question 7 : Moyenne du nombre de medaille gagné par pays sur toutes les éditions
