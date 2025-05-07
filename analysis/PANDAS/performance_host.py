@@ -1,22 +1,21 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-def comparaison_host_vs_nonhost(df):
+def analyser_gain_pays_hote(df):
     """
     Compare le nombre moyen de médailles gagnées par un pays lorsqu’il est hôte
-    des JO par rapport aux années où il ne l’est pas et affiche le résultat sous forme de graphique.
+    des JO par rapport aux années où il ne l’est pas et affiche le 
+    résultat sous forme de graphique.
 
     Paramètre :
-    - df : DataFrame contenant les données des JO (avec colonnes 'NOC', 'Year', 'Medal')
+    - df : DataFrame contenant les données des JO (avec colonnes 'NOC', 
+    'Year', 'Medal')
 
     Retourne :
-    - DataFrame : comparaison des pays organisateurs avec gain moyen de médailles
+    - DataFrame : comparaison des pays organisateurs avec gain moyen 
+    de médailles
     """
-
-    # 1. Garder seulement les athlètes médaillés
     df_medals = df[df["Medal"].notna()]
-
-    # 2. Liste des pays hôtes
     host_countries = [
         {"Year": 1896, "City": "Athens", "Host_NOC": "GRE"},
         {"Year": 1900, "City": "Paris", "Host_NOC": "FRA"},
@@ -91,13 +90,7 @@ def comparaison_host_vs_nonhost(df):
     plt.xticks([i + bar_width / 2 for i in index], comparison_df["Pays (NOC)"], rotation=45, ha="right")
     plt.legend()
     plt.tight_layout()
-    plt.show()
+    plt.savefig("resultats/gain_pays_hote.png")
+    
 
     return comparison_df
-
-
-
-from importation_donnees_panda import importdonneepanda
-df_panda = importdonneepanda("analysis/donnees_jeux_olympiques/athlete_events.csv")
-
-print(comparaison_host_vs_nonhost(df_panda))
