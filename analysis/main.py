@@ -20,6 +20,9 @@ from PYTHON_pur.agemoyentemps_pur import agemoyenathlètes
 from PANDAS.prediction import (
     predict_medal_chance)
 
+from PANDAS.borne_inf_sup_pd import borne_inf_sup_pd
+from PYTHON_pur.borne_inf_sup import analyser_jo_par_annee
+
 # creation du fichier rapport
 os.makedirs("resultats", exist_ok=True)
 
@@ -192,7 +195,45 @@ with open("resultats/rapport.txt", "a", encoding="utf-8") as f:
 
 
 # ------------------------------------------------------------------------------------------------------
+# Question 5 : Trouver des bornes inférieure et supérieure du nombre de
+#  médailles par nation en 2016
 
+# Resultats Avec Pandas + affichage sur results/rapport:
+
+with open("resultats/rapport.txt", "a", encoding="utf-8") as f:
+    f.write(
+        "Question 5 : Trouver des bornes inférieure et supérieure du"
+        "nombre de mé dailles par nation en 2016 \n \n"
+    )
+    f.write("- Version 1 = Avec Pandas:\n")
+
+start_time = time.time()
+
+
+with open("resultats/rapport.txt", "a", encoding="utf-8") as f:
+    f.write(borne_inf_sup_pd(df_panda))
+    f.write("\n\n")
+
+end_time = time.time()
+execution_time = end_time - start_time
+
+# tps d'execution du code python pur
+print(f" Temps d'exécution : {execution_time:.2f} secondes \n")
+
+# Resultat Avec Python pur:
+start_time = time.time()
+
+
+with open("resultats/rapport.txt", "a", encoding="utf-8") as f:
+    f.write("- Version 2 = Avec Python pur:\n")
+    f.write("On a décidé de garder les résultats pour cette "
+            "fonction uniquement sur la terminale "
+            "pour éviter la redondance \n")
+
+end_time = time.time()
+execution_time = end_time - start_time
+# tps d'execution du code python pur
+print(f" Temps d'exécution : {execution_time:.2f} secondes \n")
 
 # ------------------------------------------------------------------------------------------------------
 
@@ -289,24 +330,6 @@ with open("resultats/rapport.txt", "a", encoding="utf-8") as f:
     f.write("\n\n")
 
 # Question 10 :
-from Q10 import plot_medals_by_region_and_season
-df_regions = pd.read_csv("analysis/PANDAS/donnees_jeux_olympiques/noc_regions_avec_grande_region.csv")
-
-# Créer le graphique
-plt_obj = plot_medals_by_region_and_season(df_panda, df_regions)
-
-# Affichage
-plt_obj.show()
-
-# Sauvegarde du graphique
-plt_obj.savefig("resultats/medals_by_region_and_season.png")
-plt_obj.close()
-
-#a mettre dans main
-df_olympics = pd.read_csv("athlete_events.csv")
-
-
-
 
 # ----------------------------------------------------------------------------
 # -------------------------
