@@ -1,11 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-import pandas as pd
-
-import pandas as pd
-import matplotlib.pyplot as plt
-
 def comparaison_host_vs_nonhost(df):
     """
     Compare le nombre moyen de médailles gagnées par un pays lorsqu’il est hôte
