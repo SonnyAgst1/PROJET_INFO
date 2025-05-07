@@ -1,51 +1,54 @@
-import csv
-from collections import defaultdict
+import pandas as pd
 
-# 1. Définir les sports collectifs
-collective_sports = {'Basketball', 'Football', 'Handball', 'Hockey', 'Water Polo',
-                     'Rugby Sevens', 'Baseball', 'Softball', 'Volleyball'}
 
-# 2. Initialiser les structures
-indiv_counts = defaultdict(int)
-coll_seen = set()  # pour éviter les doublons collectifs
-coll_counts = defaultdict(int)
+def moyenne_medailles_pur(df):
+    """
+    Version Python pur.
+    Calcule la moyenne de médailles sur l'ensemble des
+    années olympiques.
 
-# 3. Lire le fichier CSV
-with open("donnees_jeux_olympiques/donnees_jeux_olympiques/athlete_events.csv", encoding='utf-8') as file:
-    reader = csv.DictReader(file)
-    for row in reader:
-        team = row['Team'].strip().lower()  # Normalisation
-        sport = row['Sport'].strip()
-        medal = row['Medal'].strip().lower()
-        year = int(row['Year'].strip())
-        event = row['Event'].strip()
+    Paramètre :
+    - data : liste de dictionnaires (issue de csv.DictReader)
 
-        if medal not in ['gold', 'silver', 'bronze']:
-            continue  # ignorer les lignes sans médaille
+    Retourne :
+    - Un tuple représentant la moyenne des médailles gagnées par type
+    de sport sur toutes les années des JO
+    (moyenne pour les sports individuels ,
+    moyenne pour les sports collectifs, moyenne totale)
+    """
+    # Conversion en dataframe la liste
+    df = pd.DataFrame(df)
 
-        if sport in collective_sports:
-            key = (team, year, event, medal)
-            if key not in coll_seen:
-                coll_seen.add(key)
-                coll_counts[team] += 1
-        else:
-            indiv_counts[team] += 1
+    # Liste des sports collectifs
+    collective_sports = [
+        'Basketball', 'Football', 'Handball', 'Hockey', 'Water Polo',
+        'Rugby Sevens', 'Baseball', 'Softball', 'Volleyball']
 
-# 4. Calcul des moyennes
+    # Catégorie du sport
+    df['Sport_category'] = df['Sport'].apply(
+        lambda x: 'collectif' if x in collective_sports else 'individuel')
 
-# Moyenne uniquement pour les pays ayant des médailles individuelles
-avg_indiv = sum(indiv_counts.values()) / len(indiv_counts) if indiv_counts else 0
+    # Supprimer les lignes sans médaille
+    medals_df = df.dropna(subset=['Medal'])
 
-# Moyenne uniquement pour les pays ayant des médailles collectives
-avg_coll = sum(coll_counts.values()) / len(coll_counts) if coll_counts else 0
+    # Séparer les catégories
+    indiv_medals = medals_df[medals_df['Sport_category'] == 'individuel']
+    coll_medals = medals_df[medals_df['Sport_category'] == 'collectif']
 
-# Fusion des deux pour le total
-all_teams = set(indiv_counts.keys()) | set(coll_counts.keys())
-total_counts = {team: indiv_counts.get(team, 0) + coll_counts.get(team, 0) for team in all_teams}
-avg_total = sum(total_counts.values()) / len(total_counts) if total_counts else 0
+    # Pour les sports collectifs, une médaille par
+    # pays/année/événement/médaille
+    coll_medals_unique = coll_medals.drop_duplicates(
+        subset=['Team', 'Year', 'Event', 'Medal'])
 
-# 5. Affichage des résultats
-print("Moyenne de médailles par pays :")
-print(f" - Sports individuels : {avg_indiv:.2f}")
-print(f" - Sports collectifs  : {avg_coll:.2f}")
-print(f" - Total              : {avg_total:.2f}")
+    # Compter par pays
+    indiv_counts = indiv_medals['Team'].value_counts()
+    coll_counts = coll_medals_unique['Team'].value_counts()
+    total_counts = indiv_counts.add(coll_counts, fill_value=0)
+
+    # Moyennes
+    avg_indiv = indiv_counts.mean()
+    avg_coll = coll_counts.mean()
+    avg_total = total_counts.mean()
+
+    return avg_indiv, avg_coll, avg_total
+

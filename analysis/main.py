@@ -7,14 +7,23 @@ from import_donnee_pur import importdonneespur
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 
-from Nbr_medaille_athlète import nbr_medailles
 import os
 os.makedirs("resultats", exist_ok=True)
 
 df_panda = importdonneepanda("analysis/donnees_jeux_olympiques/athlete_events.csv")
 df_pur = importdonneespur("analysis/donnees_jeux_olympiques/athlete_events.csv")
+
+#---------------------------------------------------------------------------------------------
 # Question 1 : Déterminer le nombre de médaille gagné par Micheal Phelps
 
+#Resultat Avec Python pur:
+
+from Nbr_medaille_athlète import nbr_medailles
+
+with open("resultats/rapport.txt", "a", encoding="utf-8") as f:
+    f.write(f"Question 1 : Déterminer le nombre de médaille gagné par un athlète (l'exemple de Micheal Phelps):\n")
+    f.write(f"- Version 1 = Avec Pyhton pur:\n")
+    
 athlete = "Michael Fred Phelps, II"
 medailles = nbr_medailles_pur(df_pur, athlete)
 
@@ -23,15 +32,17 @@ print(f"Nombre de médailles de {athlete} :")
 for type_medaille, nb in medailles.items():
     print(f"  {type_medaille} : {nb}")
 
-# Écriture dans le rapport
+# Rajout au rapport
 with open("resultats/rapport.txt", "a", encoding="utf-8") as f:
     f.write(f"Nombre de médailles de {athlete} (Python pur) :\n")
     for type_medaille, nb in medailles.items():
         f.write(f"  {type_medaille} : {nb}\n")
     f.write("\n")
 
+#---------------------------------------------------------------------------------------------------
 
 # Question 2 : Quels sont les sports où la taille et le poids influencent le plus les performances ?
+
 from sportmedal_correlation import sport_medal_correlation
 
 correlations = sport_medal_correlation(df_panda)
@@ -50,6 +61,9 @@ correlations.to_csv("resultats/tableaux.csv", mode="a", index=False)
 
 
 
+
+#----------------------------------------------------------------------------------------------------
+
 # Question 3 : Quel est le profil type d'un médaillé selon la discipline ?
 
 from Profil_moyen import profil_moyen
@@ -59,12 +73,15 @@ result = profil_moyen(df_panda)
 print(result.head())
 
 # Sauvegarde du résultat
-result.reset_index().assign(Analyse="Profil moyen par sport").to_csv("resultats/tableaux.csv", mode="a", index=False)
+result.reset_index().assign(Analyse="Profil moyen par sport").to_csv("resultats/tableaux.csv", mode="a", index=False
+
+
+
+#-------------------------------------------------------------------------------------------------------
 
 # Question 4 : Y a t-il une relation entre la taille d'un pays (nombre d'athlète) et son nombre de médaille
 
-
-from Cor_ath_med import plot_correlation_athletes_vs_medals
+from plot_correlation_athletes_vs_medals import plot_correlation_athletes_vs_medals
 
 print(" Y a t-il une relation entre la taille d'un pays (nombre d'athlète) et son nombre de médaille ?")
 plt_obj = plot_correlation_athletes_vs_medals(df_panda)
@@ -72,7 +89,11 @@ plt_obj.savefig("resultats/correlation_athletes_vs_medailles.png")
 plt_obj.close()
 
 
+#------------------------------------------------------------------------------------------------------
+
 # Question 5 : Trouver les bornes inférieur et supérieur du nombre de médaille par nation en 2016
+
+
 from borne_inf_sup import analyser_jo_par_annee
 chemin = "donnees_jeux_olympiques/donnees_jeux_olympiques/athlete_events.csv"
 print("Trouver les bornes inférieur et supérieur du nombre de médaille par nation en 2016 :")
@@ -93,6 +114,7 @@ with open("resultats/rapport.txt", "a", encoding="utf-8") as f:
     f.write("\n")
 
 
+#----------------------------------------------------------------------------------------------------
 
 # Question 6 : Est ce que les pays hotes performent mieux que les autres ?
 

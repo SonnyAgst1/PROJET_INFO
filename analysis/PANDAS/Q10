@@ -1,0 +1,75 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+
+import pandas as pd
+import matplotlib.pyplot as plt
+
+def plot_medals_by_region_and_season(df_olympics, df_regions):
+    """
+    Génère un graphique montrant la répartition des médailles olympiques par grande région et par saison.
+
+    Paramètres :
+    - df_olympics : DataFrame des athlètes olympiques
+    - df_regions : DataFrame des régions avec colonne 'grande_region'
+
+    Retourne :
+    - Un objet matplotlib pour le graphique
+    """
+    
+    # 1. Filtrer les athlètes ayant gagné une médaille
+    df_medals = df_olympics.dropna(subset=["Medal"])
+
+    # 2. Fusionner avec les grandes régions
+    df_medals = df_medals.merge(df_regions[["NOC", "grande_region"]], on="NOC", how="left")
+
+    # 3. Supprimer les lignes sans grande région
+    df_medals = df_medals.dropna(subset=["grande_region"])
+
+    # 4. Compter les médailles par grande région et par saison
+    region_medals = df_medals.groupby(["Season", "grande_region"]).size().unstack().fillna(0)
+
+    # 5. S'assurer que toutes les grandes régions sont présentes dans les deux saisons
+    all_regions = region_medals.columns
+    for season in ["Winter", "Summer"]:
+        if season not in region_medals.index:
+            region_medals.loc[season] = [0] * len(all_regions)
+
+    # Réorganiser les saisons dans l'ordre souhaité
+    region_medals = region_medals.loc[["Winter", "Summer"]]
+
+    # 6. Définir les couleurs
+    color_map = {
+        "Winter": "#1f3b70",
+        "Summer": "#e1ad01"
+    }
+    colors = [color_map[s] for s in region_medals.index]
+
+    # 7. Créer le graphique
+    ax = region_medals.T.plot(kind="bar", figsize=(14, 7), color=colors)
+    plt.title("Répartition des médailles olympiques par grande région et par saison")
+    plt.ylabel("Nombre de médailles")
+    plt.xlabel("Grande région")
+    plt.xticks(rotation=45)
+    plt.legend(title="Saison")
+    plt.tight_layout()
+
+    # Ajouter les valeurs
+    for container in ax.containers:
+        ax.bar_label(container, label_type="edge", fontsize=8)
+
+    return plt
+-------------------------------------
+" a mettre dans main "
+from region_medals import plot_medals_by_region_and_season
+
+df_regions = pd.read_csv("analysis/PANDAS/donnees_jeux_olympiques/noc_regions_avec_grande_region.csv")
+
+# Créer le graphique
+plt_obj = plot_medals_by_region_and_season(df_panda, df_regions)
+
+# Affichage
+plt_obj.show()
+
+# Sauvegarde du graphique
+plt_obj.savefig("resultats/medals_by_region_and_season.png")
+plt_obj.close()
