@@ -289,6 +289,24 @@ with open("resultats/rapport.txt", "a", encoding="utf-8") as f:
     f.write("\n\n")
 
 # Question 10 :
+from Q10 import plot_medals_by_region_and_season
+df_regions = pd.read_csv("analysis/PANDAS/donnees_jeux_olympiques/noc_regions_avec_grande_region.csv")
+
+# Créer le graphique
+plt_obj = plot_medals_by_region_and_season(df_panda, df_regions)
+
+# Affichage
+plt_obj.show()
+
+# Sauvegarde du graphique
+plt_obj.savefig("resultats/medals_by_region_and_season.png")
+plt_obj.close()
+
+#a mettre dans main
+df_olympics = pd.read_csv("athlete_events.csv")
+
+
+
 
 # ----------------------------------------------------------------------------
 # -------------------------
