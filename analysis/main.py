@@ -316,7 +316,7 @@ with open("resultats/rapport.txt", "a", encoding="utf-8") as f:
 
 # Question 10 :
 df_regions = pd.read_csv(
-    "analysis/PANDAS/donnees_jeux_olympiques/noc_regions_avec_grande_region.csv")
+    "analysis/donnees_jeux_olympiques/noc_regions_avec_grande_region.csv")
 print(
     "Question 10 :Quelles regions du monde dominent dans les sports d'hiver et "
     "quelles regions" 
