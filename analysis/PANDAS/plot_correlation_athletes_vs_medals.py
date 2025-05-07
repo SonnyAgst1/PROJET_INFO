@@ -1,6 +1,5 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-from import_donnee_panda import importdonneepanda
 
 def plot_correlation_athletes_vs_medals(df):
     correlations = []
@@ -36,10 +35,13 @@ def plot_correlation_athletes_vs_medals(df):
     # Tracer l’évolution
     plt.figure(figsize=(12, 6))
     plt.plot(df_corr["Year"], df_corr["Correlation"], marker="o")
-    plt.title("Corrélation entre nombre d'athlètes et nombre de médailles par pays (toutes années)")
     plt.xlabel("Année")
     plt.ylabel("Corrélation (athlètes vs médailles)")
     plt.grid(True)
     plt.tight_layout()
     plt.show()
     return plt
+
+from importation_donnees_panda import importdonneepanda
+df_panda = importdonneepanda("analysis/donnees_jeux_olympiques/athlete_events.csv")
+plot_correlation_athletes_vs_medals(df_panda)

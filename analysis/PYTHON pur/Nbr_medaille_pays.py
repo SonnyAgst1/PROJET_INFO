@@ -37,3 +37,8 @@ def moyenne_medailles_par_pays_par_annee(data):
     moyennes_triees = sorted(moyennes, key=lambda x: x[1], reverse=True)
 
     return moyennes_triees
+
+from importation_donnees_pypur import importdonneespur
+df_pur = importdonneespur("analysis/donnees_jeux_olympiques/athlete_events.csv")
+resultats = moyenne_medailles_par_pays_par_annee(df_pur)
+print(resultats[:10])

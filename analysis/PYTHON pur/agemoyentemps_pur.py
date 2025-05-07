@@ -7,7 +7,7 @@ from import_donnee_pur import importdonneespur
 #data est une liste de dictionnaire où chaque dictionnaire correspond à une ligne
 #on veut reproduire le graphe de l'évolution de l'age moyen des athlètes mais en python pur
 
-def agemoyenathlètes(df):
+def agemoyenathlètes(data):
     data_unique = []
     vu = set()
     for ligne in data:
@@ -45,3 +45,7 @@ def agemoyenathlètes(df):
     plt.tight_layout()
     plt.show()
     return plt
+
+from importation_donnees_pypur import importdonneespur
+df_pur = importdonneespur("analysis/donnees_jeux_olympiques/athlete_events.csv")
+agemoyenathlètes(df_pur)

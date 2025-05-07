@@ -51,3 +51,7 @@ def graphique_medailles_par_type(df, top_n=10):
     plt.tight_layout()
     plt.show()
     return plt
+
+from importation_donnees_panda import importdonneepanda
+df_panda = importdonneepanda("analysis/donnees_jeux_olympiques/athlete_events.csv")
+graphique_medailles_par_type(df_panda, 10)
