@@ -1,0 +1,47 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+
+df_olympics = pd.read_csv("athlete_events.csv")
+df_regions = pd.read_csv("noc_regions_avec_grande_region.csv")
+
+# Garder uniquement les athlètes ayant gagné une médaille
+df_medals = df_olympics.dropna(subset=["Medal"])
+
+# Fusionner avec les grandes régions
+df_medals = df_medals.merge(df_regions[["NOC", "grande_region"]], on="NOC", how="left")
+
+# Supprimer les lignes sans grande région
+df_medals = df_medals.dropna(subset=["grande_region"])
+
+# Compter les médailles par grande région et par saison
+region_medals = df_medals.groupby(["Season", "grande_region"]).size().unstack().fillna(0)
+
+# S'assurer que toutes les grandes régions sont dans les deux saisons
+# On complète manuellement avec 0 pour les absents
+all_regions = region_medals.columns
+for season in ["Winter", "Summer"]:
+    if season not in region_medals.index:
+        region_medals.loc[season] = [0] * len(all_regions)
+
+region_medals = region_medals.loc[["Winter", "Summer"]]
+
+# Couleurs
+color_map = {
+    "Winter": "#1f3b70",
+    "Summer": "#e1ad01"
+}
+colors = [color_map[s] for s in region_medals.index]
+
+ax = region_medals.T.plot(kind="bar", figsize=(14, 7), color=colors)
+plt.title("Répartition des médailles olympiques par grande région et par saison")
+plt.ylabel("Nombre de médailles")
+plt.xlabel("Grande région")
+plt.xticks(rotation=45)
+plt.legend(title="Saison")
+plt.tight_layout()
+
+# Ajouter les valeurs
+for container in ax.containers:
+    ax.bar_label(container, label_type="edge", fontsize=8)
+
+plt.show()
