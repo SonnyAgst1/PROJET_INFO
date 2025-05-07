@@ -1,9 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-import pandas as pd
-import matplotlib.pyplot as plt
-
 def plot_medals_by_region_and_season(df_olympics, df_regions):
     """
     Génère un graphique montrant la répartition des médailles olympiques par grande région et par saison.
@@ -15,7 +12,7 @@ def plot_medals_by_region_and_season(df_olympics, df_regions):
     Retourne :
     - Un objet matplotlib pour le graphique
     """
-    
+
     # 1. Filtrer les athlètes ayant gagné une médaille
     df_medals = df_olympics.dropna(subset=["Medal"])
 
@@ -58,18 +55,3 @@ def plot_medals_by_region_and_season(df_olympics, df_regions):
         ax.bar_label(container, label_type="edge", fontsize=8)
 
     return plt
--------------------------------------
-" a mettre dans main "
-from region_medals import plot_medals_by_region_and_season
-
-df_regions = pd.read_csv("analysis/PANDAS/donnees_jeux_olympiques/noc_regions_avec_grande_region.csv")
-
-# Créer le graphique
-plt_obj = plot_medals_by_region_and_season(df_panda, df_regions)
-
-# Affichage
-plt_obj.show()
-
-# Sauvegarde du graphique
-plt_obj.savefig("resultats/medals_by_region_and_season.png")
-plt_obj.close()
