@@ -69,4 +69,3 @@ def menu(fichier):
 
 fichier = "PROJET_INFO/analysis/donnees_jeux_olympiques/athlete_events.csv"
 menu(fichier)
-
