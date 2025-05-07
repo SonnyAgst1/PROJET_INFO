@@ -126,9 +126,4 @@ def predict_medal_chance(df, age, height, weight, sex, sport, noc,
     prob = model.predict_proba(athlete_row)[0][1]
     return prob
 
-# Chargement de ta base
-df = pd.read_csv("analysis/donnees_jeux_olympiques/athlete_events.csv")
 
-# Prédiction directe (le modèle s'entraîne une seule fois puis est réutilisé)
-proba = predict_medal_chance(df, 25, 195, 95, "M", "Basketball", "USA")
-print(f"Probabilité de gagner une médaille : {proba:.2%}")
