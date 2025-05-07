@@ -2,6 +2,14 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 def plot_correlation_athletes_vs_medals(df):
+    """ Calcul de la correlation entre la taille d'un pays et son nombre de médaille gagné
+    Entrée:
+     ------------------------------
+     Dataframe en pandas
+     Retourne
+     ----------------------
+     graphique de la corrélation entre la taille d'un pays et son nombre de médaille gagné
+     au cours du temps  """
     correlations = []
 
     for year in sorted(df["Year"].unique()):

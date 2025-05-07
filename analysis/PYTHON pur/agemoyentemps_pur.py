@@ -8,6 +8,10 @@ from import_donnee_pur import importdonneespur
 #on veut reproduire le graphe de l'évolution de l'age moyen des athlètes mais en python pur
 
 def agemoyenathlètes(data):
+    """ Entré : liste de dictionnaire représentant une ligne de la base de donnée
+    ---------------------
+        Retourne : Graphique de l'évolution de l'age des athlètes au cours du temps
+    """
     data_unique = []
     vu = set()
     for ligne in data:
