@@ -3,6 +3,7 @@ from PANDAS.importation_donnees_panda import importdonneepanda
 from PYTHON_pur.importation_donnees_pypur import importdonneespur
 import time
 import os
+import matplotlib.pyplot as plt
 from PANDAS.plot_correlation_athletes_vs_medals import (
     plot_correlation_athletes_vs_medals,
 )
@@ -10,7 +11,7 @@ from PYTHON_pur.nb_médailles_athlete import nbr_medailles
 from PANDAS.nb_medailles_athlete_pd import nbr_medailles_pd
 
 from PANDAS.corr_taille_poids_performances import (
-    corr_taille_poids_performances
+    corr_taille_poids_performances_pd
 )
 from PANDAS.Profil_moyen import profil_moyen
 from PANDAS.performance_host import analyser_gain_pays_hote
@@ -19,13 +20,17 @@ from PANDAS.nbr_med_pays_co_vs_ind import graphique_medailles_par_type
 from PYTHON_pur.agemoyentemps_pur import agemoyenathlètes
 from PANDAS.prediction import (
     predict_medal_chance)
+from PANDAS.borne_inf_sup_pd import analyser_jo_2016_df
+from PANDAS.plot_medals_by_region_and_season import (
+    plot_medals_by_region_and_season)
 
-from PANDAS.borne_inf_sup_pd import borne_inf_sup_pd
-from PYTHON_pur.borne_inf_sup import analyser_jo_par_annee
 
 # creation du fichier rapport
 os.makedirs("resultats", exist_ok=True)
-
+# Écraser le contenu précédent du fichier rapport.txt
+with open("resultats/rapport.txt", "w", encoding="utf-8") as f:
+    f.write("RAPPORT D'ANALYSE DES DONNÉES OLYMPIQUES\n")
+    f.write("=" * 50 + "\n\n")
 
 # importation des données
 
@@ -136,7 +141,7 @@ with open("resultats/rapport.txt", "a", encoding="utf-8") as f:
 # le plus les performances ?
 
 
-results = corr_taille_poids_performances(df_panda)
+results = corr_taille_poids_performances_pd(df_panda)
 
 correlations = pd.DataFrame(results).sort_values(
     by="Combined", ascending=False)
@@ -152,7 +157,7 @@ with open("resultats/rapport.txt", "a", encoding="utf-8") as f:
     )
     f.write(f"{correlations.head(10)}\n \n")
 
-
+# print(correlations2.head(10))
 # ----------------------------------------------------------------------------------------------------
 
 # Question 3 : Quel est le profil type d'un médaillé selon la discipline ?
@@ -205,13 +210,11 @@ with open("resultats/rapport.txt", "a", encoding="utf-8") as f:
         "Question 5 : Trouver des bornes inférieure et supérieure du"
         "nombre de mé dailles par nation en 2016 \n \n"
     )
-    f.write("- Version 1 = Avec Pandas:\n")
 
 start_time = time.time()
 
-
 with open("resultats/rapport.txt", "a", encoding="utf-8") as f:
-    f.write(borne_inf_sup_pd(df_panda))
+    f.write(analyser_jo_2016_df(df_panda))
     f.write("\n\n")
 
 end_time = time.time()
@@ -220,41 +223,31 @@ execution_time = end_time - start_time
 # tps d'execution du code python pur
 print(f" Temps d'exécution : {execution_time:.2f} secondes \n")
 
-# Resultat Avec Python pur:
-start_time = time.time()
 
 
-with open("resultats/rapport.txt", "a", encoding="utf-8") as f:
-    f.write("- Version 2 = Avec Python pur:\n")
-    f.write("On a décidé de garder les résultats pour cette "
-            "fonction uniquement sur la terminale "
-            "pour éviter la redondance \n")
 
-end_time = time.time()
-execution_time = end_time - start_time
-# tps d'execution du code python pur
-print(f" Temps d'exécution : {execution_time:.2f} secondes \n")
-
-# ------------------------------------------------------------------------------------------------------
-
+# -----------------------------------------------------------------------------------------------------
 # Question 6 : Est ce que les pays hotes performent mieux que les autres ?
+try:
+    # Question 6 : Est ce que les pays hôtes performent mieux que les autres ?
+    resultats = analyser_gain_pays_hote(df_panda)
 
-# Chargement des données
+    print("Analyse de l'impact du pays hôte sur les performances :\n")
+    print(resultats)
 
-resultats = analyser_gain_pays_hote(df_panda)
+    with open("resultats/rapport.txt", "a", encoding="utf-8") as f:
+        f.write(
+            "Question 6 : Influence du pays hôte sur le nombre"
+            " de médailles gagnées\n"
+        )
+        f.write(resultats.to_string(index=False))
+        f.write("\n\n")
 
-# Affichage
-print("Analyse de l'impact du pays hôte sur les performances :\n")
-print(resultats)
+except Exception as e:
+    print("ERREUR à la question 6 :", e)
+    with open("resultats/rapport.txt", "a", encoding="utf-8") as f:
+        f.write("Erreur lors du traitement de la question 6 : " + str(e) + "\n\n")
 
-# Sauvegarde dans un rapport
-with open("resultats/rapport.txt", "a", encoding="utf-8") as f:
-    f.write(
-        "Question 6 : Influence du pays hôte sur le nombre"
-        "de médailles gagnées\n"
-    )
-    f.write(resultats.to_string(index=False))
-    f.write("\n\n")
 
 
 # Question 7 : Moyenne du nombre de medaille gagné par pays sur
@@ -262,8 +255,15 @@ with open("resultats/rapport.txt", "a", encoding="utf-8") as f:
 
 # Resultat Avec Python pur:
 start_time = time.time()
+resultats = moyenne_medailles_par_pays_par_annee(df_pur)
+# Enregistrement dans un fichier TXT
+output_txt_path = "resultats/moyenne_medailles_par_pays.txt"
+with open(output_txt_path, "w", encoding="utf-8") as txtfile:
+    txtfile.write("Moyenne des médailles gagnées par pays par année\n\n")
+    for pays, moyenne in resultats:
+        txtfile.write(f"{pays}: {moyenne:.2f} médailles/an\n")
 
-
+print(f"Les résultats ont été enregistrés dans {output_txt_path}")
 with open("resultats/rapport.txt", "a", encoding="utf-8") as f:
     f.write(
         "Question 7 : Moyenne du nombre de medaille gagné par type de"
@@ -271,22 +271,7 @@ with open("resultats/rapport.txt", "a", encoding="utf-8") as f:
     )
     f.write("- Version 1 = Avec Pyhton pur:\n")
 
-resultats = moyenne_medailles_pur(df_pur)
-
-
-# Sauvegarder dans rapport.txt
-with open("resultats/rapport.txt", "a", encoding="utf-8") as f:
-    f.write(
-        "Moyenne du nombre de medaille gagné par type de"
-        "sport sur toutes les éditions: \n"
-    )
-    f.write(
-        " Nombre moyen de médailles individuelles par pays :"
-        f"{resultats[0]:.2f} \n"
-        " Nombre moyen de médailles "
-        f"collectives par pays : {resultats[1]:.2f} \n"
-        f" Nombre moyen total de médailles par pays : {resultats[2]:.2f}\n \n"
-    )
+resultats = moyenne_medailles_par_pays_par_annee(df_pur)
 
 
 # Question 8 : Quel est le nombre de médailles remportées par chaque pays, en
@@ -330,21 +315,26 @@ with open("resultats/rapport.txt", "a", encoding="utf-8") as f:
     f.write("\n\n")
 
 # Question 10 :
-from Q10 import plot_medals_by_region_and_season
-df_regions = pd.read_csv("analysis/PANDAS/donnees_jeux_olympiques/noc_regions_avec_grande_region.csv")
+df_regions = pd.read_csv(
+    "analysis/PANDAS/donnees_jeux_olympiques/noc_regions_avec_grande_region.csv")
+print(
+    "Question 10 :Quelles regions du monde dominent dans les sports d'hiver et "
+    "quelles regions" 
+    "dominent sur celles d'été ?"
+    "Voir figure"
+)
+plot_medals_by_region_and_season(df_panda, df_regions)
 
-# Créer le graphique
-plt_obj = plot_medals_by_region_and_season(df_panda, df_regions)
 
-# Affichage
-plt_obj.show()
+with open("resultats/rapport.txt", "a", encoding="utf-8") as f:
+    f.write("Question 10 :Quelles regions du monde dominent dans les sports"
+    " d'hiver et quelles regions" 
+            "dominent sur celles d'été ? \n\n")
+    f.write("Voir figure")
+    f.write("\n\n")
 
-# Sauvegarde du graphique
-plt_obj.savefig("resultats/medals_by_region_and_season.png")
-plt_obj.close()
 
-#a mettre dans main
-df_olympics = pd.read_csv("athlete_events.csv")
+
 # ----------------------------------------------------------------------------
 # -------------------------
 # Question de prédiction :
