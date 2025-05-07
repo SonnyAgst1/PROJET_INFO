@@ -1,9 +1,11 @@
-import pandas as pd
+
 import matplotlib.pyplot as plt
+
 
 def plot_medals_by_region_and_season(df_olympics, df_regions):
     """
-    Génère un graphique montrant la répartition des médailles olympiques par grande région et par saison.
+    Génère un graphique montrant la répartition des médailles 
+    olympiques par grande région et par saison.
 
     Paramètres :
     - df_olympics : DataFrame des athlètes olympiques
@@ -17,15 +19,18 @@ def plot_medals_by_region_and_season(df_olympics, df_regions):
     df_medals = df_olympics.dropna(subset=["Medal"])
 
     # 2. Fusionner avec les grandes régions
-    df_medals = df_medals.merge(df_regions[["NOC", "grande_region"]], on="NOC", how="left")
+    df_medals = df_medals.merge(
+        df_regions[["NOC", "grande_region"]], on="NOC", how="left")
 
     # 3. Supprimer les lignes sans grande région
     df_medals = df_medals.dropna(subset=["grande_region"])
 
     # 4. Compter les médailles par grande région et par saison
-    region_medals = df_medals.groupby(["Season", "grande_region"]).size().unstack().fillna(0)
+    region_medals = df_medals.groupby(
+        ["Season", "grande_region"]).size().unstack().fillna(0)
 
-    # 5. S'assurer que toutes les grandes régions sont présentes dans les deux saisons
+    # 5. S'assurer que toutes les grandes régions 
+    # sont présentes dans les deux saisons
     all_regions = region_medals.columns
     for season in ["Winter", "Summer"]:
         if season not in region_medals.index:
@@ -43,7 +48,8 @@ def plot_medals_by_region_and_season(df_olympics, df_regions):
 
     # 7. Créer le graphique
     ax = region_medals.T.plot(kind="bar", figsize=(14, 7), color=colors)
-    plt.title("Répartition des médailles olympiques par grande région et par saison")
+    plt.title(
+        "Répartition des médailles olympiques par grande région et par saison")
     plt.ylabel("Nombre de médailles")
     plt.xlabel("Grande région")
     plt.xticks(rotation=45)
@@ -53,5 +59,6 @@ def plot_medals_by_region_and_season(df_olympics, df_regions):
     # Ajouter les valeurs
     for container in ax.containers:
         ax.bar_label(container, label_type="edge", fontsize=8)
+    plt.savefig("resultats/medals_by_region_and_season.png")
 
-    return plt
+    
